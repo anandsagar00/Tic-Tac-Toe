@@ -1,5 +1,5 @@
 #include<iostream>
-#include<stdio.h>
+#include<ctype.h>
 
 using namespace std;
 
@@ -35,19 +35,19 @@ ticTacToe::ticTacToe(){
 void ticTacToe::display(){
     if(status == 1){
         if(arr[columnIndex][rowIndex] == 'X')
-            printf("Player X has won the game\n");
+            cout << "Player X has won the game\n";
         else
-            printf("Player O has won the game\n");
+            cout << "Player O has won the game\n";
     }
 
     for(columnIndex=0; columnIndex < 3; ++columnIndex){
         for(rowIndex=0; rowIndex < 3; ++rowIndex)
-            printf("%c ",arr[columnIndex][rowIndex]);
-        printf("\n");
+            cout << arr[columnIndex][rowIndex] << " ";
+        cout << "\n";
     }
 
-    if(count == 10)
-        printf("This match is a tie\n");
+    if(count == 10 && status != 1)
+        cout << "This match is a tie\n";
 }
 
 /*
@@ -57,9 +57,15 @@ void ticTacToe::display(){
 */
 int ticTacToe::play(){
     label :{
-        cout << "Enter the column index and row index respectively and press enter\n";
+
+        cout << "Enter the row index and column index respectively and press enter\n";
         cin >> columnIndex >> rowIndex;
 
+        if( columnIndex > 3 || rowIndex > 3){
+            cout << "You have entered invalid index\n";
+            goto label;
+        }
+            
         /*
             Here we decrement the value of both the indexes because players follow 1-based indexing but C/C++
             follows 0-based indexing. Doing so helps to eliminate the confusion in the players regarding indexing.
@@ -67,16 +73,19 @@ int ticTacToe::play(){
         --rowIndex;
         --columnIndex;
 
-        
         //The below if condition checks if the entered position is vacant or already occupied
-        if(arr[columnIndex][rowIndex] == 'O' || arr[columnIndex][rowIndex] == 'X')
+        if(arr[columnIndex][rowIndex] == 'O' || arr[columnIndex][rowIndex] == 'X'){
+            cout << "The position is already occupied\n";
             goto label;
-
+        }
+            
         cout << "Enter your move(X or O) and press enter\n";
-        cin >> arr[columnIndex][rowIndex];   
+        cin >> arr[columnIndex][rowIndex]; 
+        arr[columnIndex][rowIndex] = toupper(arr[columnIndex][rowIndex]); 
 
         //This condition handles invalid inputs
         if(previousMove == arr[columnIndex][rowIndex] || (arr[columnIndex][rowIndex] != 'X' && arr[columnIndex][rowIndex] != 'O')){
+            cout << "It is an invalid input\n";
             arr[columnIndex][rowIndex] = '_';
             goto label;
         }
@@ -85,7 +94,7 @@ int ticTacToe::play(){
     }   //Label ends here
 
     //This condition checks for 3 similar consecutive moves
-    if(count >= 4){
+    if(count > 4){
         if(arr[columnIndex][0] == arr[columnIndex][1] && arr[columnIndex][1] == arr[columnIndex][2])
             status = 1;
         else if(arr[0][rowIndex] == arr[1][rowIndex] && arr[1][rowIndex] == arr[2][rowIndex])
@@ -101,12 +110,17 @@ int ticTacToe::play(){
 
 int main(){
     ticTacToe game;
-    int numberOfMoves = 9,result;
+    int numberOfMoves = 9,result = 0;
     
     cout << "Rules of the game:\n";
     cout << "1)This is a multiplayer game\n";
     cout << "2) Game shall follow 1 based indexing.\n";
     cout << "3) The first player to have 3 consecutive X or O will be the winner respectively\n";
+    cout << " ----> Row\n";
+    cout << " | \n";
+    cout << " | \n";
+    cout << "\\/\n";
+    cout << "Column\n";
     cout << "Let's begin!\n";
 
     while(numberOfMoves--){
